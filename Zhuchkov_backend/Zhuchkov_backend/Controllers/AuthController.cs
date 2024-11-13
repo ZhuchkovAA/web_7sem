@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
 
 namespace Zhuchkov_backend.Controllers
@@ -12,6 +13,14 @@ namespace Zhuchkov_backend.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+
+        private readonly Zhuchkov_backendContext _context;
+
+        public AuthController(Zhuchkov_backendContext context)
+        {
+            _context = context;
+        }
+
         public struct LoginData
         {
             public string TagTelegram { get; set; }
@@ -20,7 +29,7 @@ namespace Zhuchkov_backend.Controllers
         [HttpPost]
         public object GetToken ([FromBody] LoginData ld)
         {
-            var user = SharedData.Users.FirstOrDefault(u => u.TagTelegram == ld.TagTelegram && u.CheckPassword(ld.Password));
+            var user = _context.User.FirstOrDefault(u => u.TagTelegram == ld.TagTelegram);
             if (user==null)
             {
                 Response.StatusCode = 401;

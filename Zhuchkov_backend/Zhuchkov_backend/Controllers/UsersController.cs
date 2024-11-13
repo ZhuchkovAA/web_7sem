@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
@@ -15,13 +14,21 @@ namespace Zhuchkov_backend.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        [HttpGet("{id?}")]
-        [Authorize(Roles = "admin")]
-        public List<User> GetUsers(string id = null)
-        {
-            if (string.IsNullOrEmpty(id)) return SharedData.Users;
+        private readonly Zhuchkov_backendContext _context;
 
-            var user = SharedData.Users.FirstOrDefault(u => u.IdTelegram == id);
+        public UsersController(Zhuchkov_backendContext context)
+        {
+            _context = context;
+        }
+
+        [HttpGet("{id?}")]
+        // [Authorize(Roles = "admin")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers(string id = null)
+        {
+            if (string.IsNullOrEmpty(id))
+                return await _context.User.ToListAsync();
+
+            var user = await _context.User.FirstOrDefaultAsync(u => u.IdTelegram == id);
             return user != null ? new List<User> { user } : new List<User>();
         }
 
@@ -36,14 +43,12 @@ namespace Zhuchkov_backend.Controllers
             public string Password { get; set; }
         }
 
-        [HttpPost]
-        [Authorize(Roles = "admin")]
-        public IActionResult AddUser([FromBody] CreateUserRequest request)
+            [HttpPost("create")]
+        // [Authorize(Roles = "admin")]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
-            if (SharedData.Users.Exists(u => u.IdTelegram == request.IdTelegram))
-            {
+            if (await HasUserAsync(request.IdTelegram))
                 return BadRequest("Пользователь с таким IdTelegram уже существует.");
-            }
 
             var newUser = new User
             {
@@ -58,11 +63,15 @@ namespace Zhuchkov_backend.Controllers
 
             newUser.SetPassword(request.Password);
 
-            SharedData.Users.Add(newUser);
+            _context.User.Add(newUser);
+            await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно добавлен", user = newUser });
         }
 
-       
+        private async Task<bool> HasUserAsync(string idTelegram)
+        {
+            return await _context.User.AnyAsync(u => u.IdTelegram == idTelegram);
+        }
     }
 }

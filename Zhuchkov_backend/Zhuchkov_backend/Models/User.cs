@@ -3,6 +3,9 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.Linq;
+using NuGet.Protocol.Plugins;
+using NuGet.Common;
+using Newtonsoft.Json.Linq;
 
 namespace Zhuchkov_backend.Models
 {
@@ -19,36 +22,28 @@ namespace Zhuchkov_backend.Models
 
         [DataType(DataType.Date)]
         public DateTime DateInsert { get; set; }
-        private byte[] passwordHash;
-        private byte[] salt;
+        public string passwordHash;
 
         private readonly string[] Admins = { "ZhuchkovAA" };
 
         public bool IsAdmin => Admins.Contains(TagTelegram);
         public bool IsSuperAdmin => TagTelegram == "ZhuchkovAA";
 
+        private string GetHash(string text)
+        {
+            var textBytes = Encoding.UTF8.GetBytes(text);
+            var sb = new StringBuilder();
+            foreach (var b in MD5.Create().ComputeHash(textBytes))
+                sb.Append(b.ToString("x2"));
+            return sb.ToString();
+        }
+
         public void SetPassword(string password)
         {
-            using var rng = new RNGCryptoServiceProvider();
-            salt = new byte[16];
-            rng.GetBytes(salt);
-
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            passwordHash = pbkdf2.GetBytes(32);
+            passwordHash = GetHash(password);
         }
 
-        public bool CheckPassword(string password)
-        {
-            using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, 10000);
-            var computedHash = pbkdf2.GetBytes(32);
-
-            for (int i = 0; i < passwordHash.Length; i++)
-            {
-                if (passwordHash[i] != computedHash[i])
-                    return false;
-            }
-
-            return true;
-        }
+        public bool CheckPassword(string password) => GetHash(password) == passwordHash;
     }
 }
+

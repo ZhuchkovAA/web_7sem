@@ -12,7 +12,7 @@ using Zhuchkov_backend.Data;
 namespace Zhuchkov_backend.Migrations
 {
     [DbContext(typeof(Zhuchkov_backendContext))]
-    [Migration("20241113110804_InitialCreate")]
+    [Migration("20241113124434_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,57 @@ namespace Zhuchkov_backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Zhuchkov_backend.Models.StateTelegram", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StateTelegram");
+                });
+
+            modelBuilder.Entity("Zhuchkov_backend.Models.SubscribeRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdRoom")
+                        .HasColumnType("int");
+
+                    b.Property<string>("IdTelegram")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("IdTimeChunks")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SubscribeRoom");
+                });
+
+            modelBuilder.Entity("Zhuchkov_backend.Models.TimeChunk", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Time")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimeChunk");
+                });
 
             modelBuilder.Entity("Zhuchkov_backend.Models.User", b =>
                 {

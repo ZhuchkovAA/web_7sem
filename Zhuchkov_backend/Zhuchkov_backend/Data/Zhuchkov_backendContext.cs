@@ -15,5 +15,11 @@ namespace Zhuchkov_backend.Data
         }
 
         public DbSet<Zhuchkov_backend.Models.User> User { get; set; } = default!;
+
+        public DbSet<Zhuchkov_backend.Models.TimeChunk> TimeChunk { get; set; }
+
+        public DbSet<Zhuchkov_backend.Models.SubscribeRoom> SubscribeRoom { get; set; }
+
+        public DbSet<Zhuchkov_backend.Models.StateTelegram> StateTelegram { get; set; }
     }
 }
