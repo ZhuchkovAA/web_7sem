@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +13,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
+using Zhuchkov_backend.Data;
+using Zhuchkov_backend.Models;
 
 namespace Zhuchkov_backend
 {
@@ -46,6 +49,10 @@ namespace Zhuchkov_backend
                 };
             }
             );
+
+            services.AddDbContext<Zhuchkov_backendContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Zhuchkov_backendContext")));
+
             services.AddControllers();
         }
 
@@ -70,6 +77,13 @@ namespace Zhuchkov_backend
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+
+                SeedData.Initialize(services);
+            }
 
             app.UseEndpoints(endpoints =>
             {

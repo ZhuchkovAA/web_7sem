@@ -12,20 +12,20 @@ namespace Zhuchkov_backend
         public static string Issuer => "TM";
         public static string Audience => "APIclients";
         public static int LifetimeInYears => 1;
-        public static SecurityKey SigningKey => new SymmetricSecurityKey(Encoding.ASCII.GetBytes("superSecretKeyMustBeLoooooong"));
+        public static SecurityKey SigningKey => new SymmetricSecurityKey(Encoding.ASCII.GetBytes("superSecretKeyMustBeLoooooong32bitsMore"));
 
-        internal static object GenerateToken(bool is_admin = false)
+        internal static object GenerateToken(bool is_admin = false, bool is_super_admin = false)
         {
             var now = DateTime.UtcNow;
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, "user"),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, is_admin?"admin":"guest")
-                };
+            
+            var claims = new List<Claim> { new Claim(ClaimsIdentity.DefaultNameClaimType, "user") };
+            if (is_admin) claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, "admin"));
+            if (is_super_admin) claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, "super_admin" ));
+
             ClaimsIdentity identity =
             new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
                 ClaimsIdentity.DefaultRoleClaimType);
-            // создаем JWT-токен
+
             var jwt = new JwtSecurityToken(
                     issuer: Issuer,
                     audience: Audience,

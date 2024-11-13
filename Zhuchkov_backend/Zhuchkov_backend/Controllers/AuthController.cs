@@ -14,25 +14,22 @@ namespace Zhuchkov_backend.Controllers
     {
         public struct LoginData
         {
-            public string login { get; set; }
-            public string password { get; set; }
+            public string TagTelegram { get; set; }
+            public string Password { get; set; }
         }
         [HttpPost]
         public object GetToken ([FromBody] LoginData ld)
         {
-            var user = SharedData.Users.FirstOrDefault(u => u.Login == ld.login && u.Password == ld.password);
+            var user = SharedData.Users.FirstOrDefault(u => u.TagTelegram == ld.TagTelegram && u.CheckPassword(ld.Password));
             if (user==null)
             {
                 Response.StatusCode = 401;
                 return new { message = "wrong login/password" };
             }    
-            return AuthOptions.GenerateToken(user.IsAdmin);
+            return AuthOptions.GenerateToken(user.IsAdmin, user.IsSuperAdmin);
         }
-        [HttpGet("users")]
-        public List<User> GetUsers ()
-        {
-            return SharedData.Users;
-        }
+
+        /*
         [HttpGet("token")]
         public object GetToken ()
         {
@@ -43,5 +40,6 @@ namespace Zhuchkov_backend.Controllers
         {
             return AuthOptions.GenerateToken(true);
         }
+        */
     }
 }

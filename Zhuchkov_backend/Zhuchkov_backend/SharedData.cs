@@ -10,10 +10,17 @@ namespace Zhuchkov_backend
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        public static List<User> Users { get; } = new List<User>
+        public static List<User> Users { get; }
+
+        static SharedData()
         {
-            new User(){ Login = "user", Password = "user" },
-            new User(){ Login = "admin", Password = "admin" },
-        };
+            var userUser = new User { TagTelegram = "ZhuchkovAA_u" };
+            userUser.SetPassword("ZhuchkovAA_u");
+
+            var userAdmin = new User { TagTelegram = "ZhuchkovAA" };
+            userAdmin.SetPassword("ZhuchkovAA");
+
+            Users = new List<User> { userUser, userAdmin };
+        }
     }
 }
