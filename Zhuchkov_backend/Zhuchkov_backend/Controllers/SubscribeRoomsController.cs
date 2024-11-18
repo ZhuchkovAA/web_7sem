@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
 
 namespace Zhuchkov_backend.Controllers
 {
-    public class SubscribeRoomsController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SubscribeRoomsController : ControllerBase
     {
         private readonly Zhuchkov_backendContext _context;
 
@@ -19,143 +21,105 @@ namespace Zhuchkov_backend.Controllers
             _context = context;
         }
 
-        // GET: SubscribeRooms
-        public async Task<IActionResult> Index()
+        // GET: api/SubscribeRooms/{id?}
+        [HttpGet("{id?}")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<SubscribeRoom>>> GetSubscribeRooms(int? id = null)
         {
-              return View(await _context.SubscribeRoom.ToListAsync());
-        }
+            var isAdmin = User.IsInRole("admin");
+            var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
-        // GET: SubscribeRooms/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null || _context.SubscribeRoom == null)
+            if (id == null)
             {
-                return NotFound();
-            }
+                if (isAdmin)
+                    return await _context.SubscribeRoom.ToListAsync();
 
-            var subscribeRoom = await _context.SubscribeRoom
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (subscribeRoom == null)
-            {
-                return NotFound();
-            }
+                if (string.IsNullOrEmpty(userIdTelegram))
+                    return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
-            return View(subscribeRoom);
-        }
-
-        // GET: SubscribeRooms/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: SubscribeRooms/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,IdTelegram,Date,IdRoom,IdTimeChunks")] SubscribeRoom subscribeRoom)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(subscribeRoom);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(subscribeRoom);
-        }
-
-        // GET: SubscribeRooms/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.SubscribeRoom == null)
-            {
-                return NotFound();
+                return await _context.SubscribeRoom
+                    .Where(s => s.IdTelegram == userIdTelegram)
+                    .ToListAsync();
             }
 
             var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
             if (subscribeRoom == null)
-            {
-                return NotFound();
-            }
-            return View(subscribeRoom);
+                return NotFound(new { message = "Запись не найдена" });
+
+            if (!isAdmin && subscribeRoom.IdTelegram != userIdTelegram)
+                return StatusCode(403, new { message = "Доступ запрещен." });
+
+            return new List<SubscribeRoom> { subscribeRoom };
         }
 
-        // POST: SubscribeRooms/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,IdTelegram,Date,IdRoom,IdTimeChunks")] SubscribeRoom subscribeRoom)
-        {
-            if (id != subscribeRoom.Id)
-            {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(subscribeRoom);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SubscribeRoomExists(subscribeRoom.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(subscribeRoom);
+
+        public class CreateSubscribeRoomRequest
+        {
+            public string IdTelegram { get; set; }
+            public DateTime Date { get; set; }
+            public int IdRoom { get; set; }
+            public int IdTimeChunks { get; set; }
         }
 
-        // GET: SubscribeRooms/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateSubscribeRoom([FromBody] CreateSubscribeRoomRequest request)
         {
-            if (id == null || _context.SubscribeRoom == null)
+            var newSubscribeRoom = new SubscribeRoom
             {
-                return NotFound();
-            }
+                IdTelegram = request.IdTelegram,
+                Date = request.Date,
+                IdRoom = request.IdRoom,
+                IdTimeChunks = request.IdTimeChunks
+            };
 
-            var subscribeRoom = await _context.SubscribeRoom
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (subscribeRoom == null)
-            {
-                return NotFound();
-            }
-
-            return View(subscribeRoom);
-        }
-
-        // POST: SubscribeRooms/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.SubscribeRoom == null)
-            {
-                return Problem("Entity set 'Zhuchkov_backendContext.SubscribeRoom'  is null.");
-            }
-            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
-            if (subscribeRoom != null)
-            {
-                _context.SubscribeRoom.Remove(subscribeRoom);
-            }
-            
+            _context.SubscribeRoom.Add(newSubscribeRoom);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return Ok(new { message = "Запись успешно создана", subscribeRoom = newSubscribeRoom });
         }
 
-        private bool SubscribeRoomExists(int id)
+        // DELETE: api/SubscribeRooms/{id}
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteSubscribeRoom(int id)
         {
-          return _context.SubscribeRoom.Any(e => e.Id == id);
+            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
+            if (subscribeRoom == null)
+                return NotFound(new { message = "Запись не найдена" });
+
+            _context.SubscribeRoom.Remove(subscribeRoom);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Запись успешно удалена" });
+        }
+
+        // PUT: api/SubscribeRooms/{id}
+        public class UpdateSubscribeRoomRequest
+        {
+            public string IdTelegram { get; set; }
+            public DateTime Date { get; set; }
+            public int IdRoom { get; set; }
+            public int IdTimeChunks { get; set; }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateSubscribeRoom(int id, [FromBody] UpdateSubscribeRoomRequest request)
+        {
+            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
+            if (subscribeRoom == null)
+                return NotFound(new { message = "Запись не найдена" });
+
+            subscribeRoom.IdTelegram = request.IdTelegram;
+            subscribeRoom.Date = request.Date;
+            subscribeRoom.IdRoom = request.IdRoom;
+            subscribeRoom.IdTimeChunks = request.IdTimeChunks;
+
+            _context.SubscribeRoom.Update(subscribeRoom);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Запись успешно обновлена", subscribeRoom });
         }
     }
 }

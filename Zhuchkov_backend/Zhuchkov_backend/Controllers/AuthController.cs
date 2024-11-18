@@ -36,7 +36,7 @@ namespace Zhuchkov_backend.Controllers
                 Response.StatusCode = 401;
                 return new { message = "wrong login/password" };
             }    
-            return AuthOptions.GenerateToken(user.IsAdmin, user.IsSuperAdmin);
+            return AuthOptions.GenerateToken(user.IdTelegram, user.IsAdmin, user.IsSuperAdmin);
         }
     }
 }
