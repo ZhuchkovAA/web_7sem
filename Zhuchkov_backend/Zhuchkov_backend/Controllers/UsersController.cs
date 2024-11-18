@@ -22,7 +22,7 @@ namespace Zhuchkov_backend.Controllers
         }
 
         [HttpGet("{id?}")]
-        // [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(string id = null)
         {
             if (string.IsNullOrEmpty(id))
@@ -39,12 +39,11 @@ namespace Zhuchkov_backend.Controllers
             public string FirstName { get; set; }
             public string LastName { get; set; }
             public bool IsActive { get; set; }
-            public int IdStateTelegram { get; set; }
             public string Password { get; set; }
         }
 
-            [HttpPost("create")]
-        // [Authorize(Roles = "admin")]
+        [HttpPost("create")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
             if (await HasUserAsync(request.IdTelegram))
@@ -57,7 +56,8 @@ namespace Zhuchkov_backend.Controllers
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 IsActive = request.IsActive,
-                IdStateTelegram = request.IdStateTelegram,
+                IdStateTelegram = 0,
+                IsAdmin = false,
                 DateInsert = DateTime.UtcNow
             };
 
@@ -69,9 +69,69 @@ namespace Zhuchkov_backend.Controllers
             return Ok(new { message = "Пользователь успешно добавлен", user = newUser });
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var userResult = await FindUserAsync(id);
+            if (userResult.Result is NotFoundObjectResult) return userResult.Result;
+
+            var user = userResult.Value;
+
+            _context.User.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Пользователь успешно удален" });
+        }
+
         private async Task<bool> HasUserAsync(string idTelegram)
         {
             return await _context.User.AnyAsync(u => u.IdTelegram == idTelegram);
+        }
+
+        public class UpdateUserRequest
+        {
+            public string TagTelegram { get; set; }
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+            public bool IsActive { get; set; }
+            public int IdStateTelegram { get; set; }
+            public string Password { get; set; }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserRequest request)
+        {
+            var userResult = await FindUserAsync(id);
+            if (userResult.Result is NotFoundObjectResult) return userResult.Result;
+
+            var user = userResult.Value;
+            user.TagTelegram = request.TagTelegram;
+            user.FirstName = request.FirstName;
+            user.LastName = request.LastName;
+            user.IsActive = request.IsActive;
+            user.IdStateTelegram = request.IdStateTelegram;
+
+            if (!string.IsNullOrEmpty(request.Password))
+            {
+                user.SetPassword(request.Password);
+            }
+
+            _context.User.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Пользователь успешно обновлен", user });
+        }
+
+        private async Task<ActionResult<User>> FindUserAsync(string id)
+        {
+            var user = await _context.User.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { message = "Пользователь не найден" });
+            }
+            return user;
         }
     }
 }

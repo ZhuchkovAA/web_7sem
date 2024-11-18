@@ -26,7 +26,9 @@ namespace Zhuchkov_backend.Models
                             FirstName = "Алексей",
                             LastName = "Жучков",
                             IsActive = true,
-                            IdStateTelegram = 0
+                            IdStateTelegram = 0,
+                            IsAdmin = true,
+                            PasswordHash = "b2497c82a254d21e015e61194cd56406"
                         }
                     );
                 }

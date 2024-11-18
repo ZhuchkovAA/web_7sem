@@ -19,17 +19,15 @@ namespace Zhuchkov_backend.Models
         public string LastName { get; set; }
         public bool IsActive { get; set; }
         public int IdStateTelegram { get; set; }
+        public string PasswordHash { get; set; }
+        public bool IsAdmin { get; set; }
 
         [DataType(DataType.Date)]
         public DateTime DateInsert { get; set; }
-        public string passwordHash;
 
-        private readonly string[] Admins = { "ZhuchkovAA" };
+        public bool IsSuperAdmin => IdTelegram == "394248224"; // ZhuchkovAA
 
-        public bool IsAdmin => Admins.Contains(TagTelegram);
-        public bool IsSuperAdmin => TagTelegram == "ZhuchkovAA";
-
-        private string GetHash(string text)
+        public static string GetHash(string text)
         {
             var textBytes = Encoding.UTF8.GetBytes(text);
             var sb = new StringBuilder();
@@ -40,10 +38,10 @@ namespace Zhuchkov_backend.Models
 
         public void SetPassword(string password)
         {
-            passwordHash = GetHash(password);
+            PasswordHash = GetHash(password);
         }
 
-        public bool CheckPassword(string password) => GetHash(password) == passwordHash;
+        public bool CheckPassword(string password) => GetHash(password) == PasswordHash;
     }
 }
 

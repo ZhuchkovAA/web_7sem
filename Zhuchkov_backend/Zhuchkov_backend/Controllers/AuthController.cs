@@ -23,32 +23,20 @@ namespace Zhuchkov_backend.Controllers
 
         public struct LoginData
         {
-            public string TagTelegram { get; set; }
+            public string IdTelegram { get; set; }
             public string Password { get; set; }
         }
         [HttpPost]
         public object GetToken ([FromBody] LoginData ld)
         {
-            var user = _context.User.FirstOrDefault(u => u.TagTelegram == ld.TagTelegram);
-            if (user==null)
+            var hashedPassword = Models.User.GetHash(ld.Password);
+            var user = _context.User.FirstOrDefault(u => u.IdTelegram == ld.IdTelegram && u.PasswordHash == hashedPassword);
+            if (user == null)
             {
                 Response.StatusCode = 401;
                 return new { message = "wrong login/password" };
             }    
             return AuthOptions.GenerateToken(user.IsAdmin, user.IsSuperAdmin);
         }
-
-        /*
-        [HttpGet("token")]
-        public object GetToken ()
-        {
-            return AuthOptions.GenerateToken();
-        }
-        [HttpGet("token/secret")]
-        public object GetAdminToken ()
-        {
-            return AuthOptions.GenerateToken(true);
-        }
-        */
     }
 }
