@@ -56,18 +56,21 @@ namespace Zhuchkov_backend.Controllers
 
         public class CreateSubscribeRoomRequest
         {
-            public string IdTelegram { get; set; }
             public DateTime Date { get; set; }
             public int IdRoom { get; set; }
             public int IdTimeChunks { get; set; }
         }
 
-        [HttpPost("create")]
-        public async Task<IActionResult> CreateSubscribeRoom([FromBody] CreateSubscribeRoomRequest request)
+        [HttpPost("create/{idTelegram?}")]
+        [Authorize]
+        public async Task<IActionResult> CreateSubscribeRoom(string? idTelegram = null, [FromBody] CreateSubscribeRoomRequest request)
         {
+            var isAdmin = User.IsInRole("admin");
+            var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
+
             var newSubscribeRoom = new SubscribeRoom
             {
-                IdTelegram = request.IdTelegram,
+                IdTelegram = isAdmin ? idTelegram ?? userIdTelegram : userIdTelegram,
                 Date = request.Date,
                 IdRoom = request.IdRoom,
                 IdTimeChunks = request.IdTimeChunks
