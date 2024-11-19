@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
+using Zhuchkov_backend.Repositories;
 
 namespace Zhuchkov_backend.Controllers
 {
@@ -15,21 +16,43 @@ namespace Zhuchkov_backend.Controllers
     public class UsersController : ControllerBase
     {
         private readonly Zhuchkov_backendContext _context;
+        private readonly UserRepository _userRepository;
 
         public UsersController(Zhuchkov_backendContext context)
         {
             _context = context;
+            _userRepository = new UserRepository(context);
         }
 
         [HttpGet("{id?}")]
-        [Authorize(Roles = "admin")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers(string id = null)
         {
-            if (string.IsNullOrEmpty(id))
-                return await _context.User.ToListAsync();
+            var isAdmin = User.IsInRole("admin");
+            var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
-            var user = await _context.User.FirstOrDefaultAsync(u => u.IdTelegram == id);
-            return user != null ? new List<User> { user } : new List<User>();
+            if (string.IsNullOrEmpty(userIdTelegram))
+                return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
+
+            if (!isAdmin)
+                return Ok(await _userRepository.GetUser(userIdTelegram).ToListAsync());
+
+            if (id == null)
+                return Ok(await _userRepository.GetUsers().ToListAsync());
+
+            var user = await _userRepository.GetUser(id).FirstOrDefaultAsync();
+
+            if (user == null)
+                return NotFound(new { message = "Пользователь не найден." });
+
+            return Ok(new List<User> { user });
+        }
+
+        [HttpGet("active")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<IEnumerable<User>>> GetActiveUsers()
+        {    
+            return await _userRepository.GetActiveUsers().ToListAsync();
         }
 
         public class CreateUserRequest
@@ -38,12 +61,10 @@ namespace Zhuchkov_backend.Controllers
             public string TagTelegram { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
-            public bool IsActive { get; set; }
             public string Password { get; set; }
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
             if (await HasUserAsync(request.IdTelegram))
@@ -55,7 +76,7 @@ namespace Zhuchkov_backend.Controllers
                 TagTelegram = request.TagTelegram,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
-                IsActive = request.IsActive,
+                IsActive = true,
                 IdStateTelegram = 0,
                 IsAdmin = false,
                 DateInsert = DateTime.UtcNow

@@ -24,7 +24,7 @@ namespace Zhuchkov_backend.Controllers
         // GET: api/SubscribeRooms/{id?}
         [HttpGet("{id?}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<SubscribeRoom>>> GetSubscribeRooms(int? id = null)
+        public async Task<ActionResult<IEnumerable<SubscribeRoom>>> GetSubscribeRooms(string? id = null)
         {
             var isAdmin = User.IsInRole("admin");
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
