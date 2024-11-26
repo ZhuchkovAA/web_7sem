@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -52,8 +53,14 @@ namespace Zhuchkov_backend.Controllers
 
         public class CreateSubscribeRoomRequest
         {
+            [Required(ErrorMessage = "Поле Date обязательно для заполнения")]
             public DateTime Date { get; set; }
+
+            [Required(ErrorMessage = "Поле IdRoom обязательно для заполнения")]
+            [Range(1, int.MaxValue, ErrorMessage = "IdRoom должен быть больше 0")]
             public int IdRoom { get; set; }
+
+            [Required(ErrorMessage = "Поле IdTimeChunks обязательно для заполнения")]
             public int[] IdTimeChunks { get; set; }
         }
 
@@ -106,6 +113,9 @@ namespace Zhuchkov_backend.Controllers
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
+            var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
+            _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
+
             _context.SubscribeRoom.Remove(subscribeRoom);
             await _context.SaveChangesAsync();
 
@@ -117,7 +127,7 @@ namespace Zhuchkov_backend.Controllers
             public string IdTelegram { get; set; }
             public DateTime Date { get; set; }
             public int IdRoom { get; set; }
-            public int IdTimeChunks { get; set; }
+            public int[] IdTimeChunks { get; set; }
         }
 
         [HttpPut("{id}")]
@@ -128,9 +138,34 @@ namespace Zhuchkov_backend.Controllers
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
-            subscribeRoom.IdTelegram = request.IdTelegram;
-            subscribeRoom.Date = request.Date;
-            subscribeRoom.IdRoom = request.IdRoom;
+            if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
+                return NotFound(new { message = "Некорректный IdTimeChunks" });
+
+            if (request.IdTelegram != null)
+                subscribeRoom.IdTelegram = request.IdTelegram;
+
+            if (request.Date != null)
+                subscribeRoom.Date = request.Date;
+
+            if (request.IdRoom != null)
+                subscribeRoom.IdRoom = request.IdRoom;
+
+            if (request.IdRoom != null)
+            {
+                var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
+                _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
+
+                foreach (var timeChunkId in request.IdTimeChunks)
+                {
+                    var subTimeChunk = new SubTimeChunk
+                    {
+                        IdSub = id,
+                        IdTimeChunk = timeChunkId
+                    };
+                    _context.SubTimeChunk.Add(subTimeChunk);
+                }
+                await _context.SaveChangesAsync();
+            }
 
             _context.SubscribeRoom.Update(subscribeRoom);
             await _context.SaveChangesAsync();

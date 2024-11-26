@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
@@ -26,6 +27,8 @@ namespace Zhuchkov_backend.Managers
 
         public bool CheckTimeChanks(int[] IdTimeChunks)
         {
+            if (IdTimeChunks.Length == 0) return false;
+
             foreach (var timeChunkId in IdTimeChunks)
             {
                 var timeChunkExists =  _context.TimeChunk.Any(tc => tc.Id == timeChunkId);
