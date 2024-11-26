@@ -63,7 +63,7 @@ namespace Zhuchkov_backend.Controllers
 
         [HttpPost("create/{idTelegram?}")]
         [Authorize]
-        public async Task<IActionResult> CreateSubscribeRoom(string? idTelegram = null, [FromBody] CreateSubscribeRoomRequest request)
+        public async Task<IActionResult> CreateSubscribeRoom([FromBody] CreateSubscribeRoomRequest request, string? idTelegram = null)
         {
             var isAdmin = User.IsInRole("admin");
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;

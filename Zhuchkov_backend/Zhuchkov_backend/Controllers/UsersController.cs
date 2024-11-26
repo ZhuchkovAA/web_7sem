@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
-using Zhuchkov_backend.Repositories;
+using Zhuchkov_backend.Managers;
 
 namespace Zhuchkov_backend.Controllers
 {
@@ -16,12 +16,12 @@ namespace Zhuchkov_backend.Controllers
     public class UsersController : ControllerBase
     {
         private readonly Zhuchkov_backendContext _context;
-        private readonly UserRepository _userRepository;
+        private readonly UsersManager _usersManager;
 
         public UsersController(Zhuchkov_backendContext context)
         {
             _context = context;
-            _userRepository = new UserRepository(context);
+            _usersManager = new UsersManager(context);
         }
 
         [HttpGet("{id?}")]
@@ -35,12 +35,12 @@ namespace Zhuchkov_backend.Controllers
                 return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
             if (!isAdmin)
-                return Ok(await _userRepository.GetUser(userIdTelegram).ToListAsync());
+                return Ok(await _usersManager.GetUser(userIdTelegram).ToListAsync());
 
             if (id == null)
-                return Ok(await _userRepository.GetUsers().ToListAsync());
+                return Ok(await _usersManager.GetUsers().ToListAsync());
 
-            var user = await _userRepository.GetUser(id).FirstOrDefaultAsync();
+            var user = await _usersManager.GetUser(id).FirstOrDefaultAsync();
 
             if (user == null)
                 return NotFound(new { message = "Пользователь не найден." });
@@ -52,7 +52,7 @@ namespace Zhuchkov_backend.Controllers
         [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<User>>> GetActiveUsers()
         {    
-            return await _userRepository.GetActiveUsers().ToListAsync();
+            return await _usersManager.GetActiveUsers().ToListAsync();
         }
 
         public class CreateUserRequest

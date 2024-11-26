@@ -2,12 +2,13 @@
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
 
-namespace Zhuchkov_backend.Repositories {
-    public class UserRepository
+namespace Zhuchkov_backend.Managers 
+{
+    public class UsersManager
     {
         private readonly Zhuchkov_backendContext _context;
 
-        public UserRepository(Zhuchkov_backendContext context)
+        public UsersManager(Zhuchkov_backendContext context)
         {
             _context = context;
         }
@@ -27,10 +28,6 @@ namespace Zhuchkov_backend.Repositories {
             return _context.User.Where(user => user.IsActive);
         }
 
-        public IQueryable<User> GetUsersSubscribe()
-        {
-            return _context.User.Where(user => user.IsActive);
-        }
     }
 }
 
