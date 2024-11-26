@@ -11,6 +11,15 @@ using Zhuchkov_backend.Managers;
 
 namespace Zhuchkov_backend.Controllers
 {
+    public class UpdateUserRequest
+    {
+        public string? TagTelegram { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public bool? IsActive { get; set; }
+        public string? Password { get; set; }
+    }
+
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -77,7 +86,6 @@ namespace Zhuchkov_backend.Controllers
                 FirstName = request.FirstName,
                 LastName = request.LastName,
                 IsActive = true,
-                IdStateTelegram = 0,
                 IsAdmin = false,
                 DateInsert = DateTime.UtcNow
             };
@@ -110,16 +118,6 @@ namespace Zhuchkov_backend.Controllers
             return await _context.User.AnyAsync(u => u.IdTelegram == idTelegram);
         }
 
-        public class UpdateUserRequest
-        {
-            public string TagTelegram { get; set; }
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-            public bool IsActive { get; set; }
-            public int IdStateTelegram { get; set; }
-            public string Password { get; set; }
-        }
-
         [HttpPut("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserRequest request)
@@ -128,11 +126,18 @@ namespace Zhuchkov_backend.Controllers
             if (userResult.Result is NotFoundObjectResult) return userResult.Result;
 
             var user = userResult.Value;
-            user.TagTelegram = request.TagTelegram;
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
-            user.IsActive = request.IsActive;
-            user.IdStateTelegram = request.IdStateTelegram;
+
+            if (request.TagTelegram != null)
+                user.TagTelegram = request.TagTelegram;
+
+            if (request.FirstName != null)
+                user.FirstName = request.FirstName;
+
+            if (request.LastName != null)
+                user.LastName = request.LastName;
+
+            if (request.IsActive.HasValue)
+                user.IsActive = request.IsActive.Value;
 
             if (!string.IsNullOrEmpty(request.Password))
             {
@@ -144,6 +149,16 @@ namespace Zhuchkov_backend.Controllers
 
             return Ok(new { message = "Пользователь успешно обновлен", user });
         }
+
+        public class UpdateUserRequest
+        {
+            public string? TagTelegram { get; set; }
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public bool? IsActive { get; set; }
+            public string? Password { get; set; }
+        }
+
 
         private async Task<ActionResult<User>> FindUserAsync(string id)
         {

@@ -15,6 +15,5 @@ namespace Zhuchkov_backend.Models
         public string IdTelegram { get; set; }
         public DateTime Date { get; set; }
         public int IdRoom { get; set; }
-        public int IdTimeChunks { get; set; }
     }
 }

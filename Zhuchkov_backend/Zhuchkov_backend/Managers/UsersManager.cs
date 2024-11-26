@@ -27,7 +27,6 @@ namespace Zhuchkov_backend.Managers
         {
             return _context.User.Where(user => user.IsActive);
         }
-
     }
 }
 

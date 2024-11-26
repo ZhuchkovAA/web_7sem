@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Zhuchkov_backend.Models
 {
-    public class StateTelegram
+    public class SubTimeChunk
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int IdSub { get; set; }
+        public int IdTimeChunk { get; set; }
     }
 }

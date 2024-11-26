@@ -20,6 +20,6 @@ namespace Zhuchkov_backend.Data
 
         public DbSet<Zhuchkov_backend.Models.SubscribeRoom> SubscribeRoom { get; set; }
 
-        public DbSet<Zhuchkov_backend.Models.StateTelegram> StateTelegram { get; set; }
+        public DbSet<Zhuchkov_backend.Models.SubTimeChunk> SubTimeChunk { get; set; }
     }
 }

@@ -18,7 +18,6 @@ namespace Zhuchkov_backend.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public bool IsActive { get; set; }
-        public int IdStateTelegram { get; set; }
         public string PasswordHash { get; set; }
         public bool IsAdmin { get; set; }
 

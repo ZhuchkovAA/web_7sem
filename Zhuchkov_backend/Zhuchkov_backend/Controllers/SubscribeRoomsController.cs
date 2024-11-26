@@ -68,12 +68,19 @@ namespace Zhuchkov_backend.Controllers
             var isAdmin = User.IsInRole("admin");
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
+            var idTelegramCreate = isAdmin ? idTelegram ?? userIdTelegram : userIdTelegram;
+            var user = await _context.User.FindAsync(idTelegramCreate);
+
+            if (user == null)
+            {
+                return NotFound(new { message = "Некорректный idTelegram" });
+            }
+
             var newSubscribeRoom = new SubscribeRoom
             {
-                IdTelegram = isAdmin ? idTelegram ?? userIdTelegram : userIdTelegram,
+                IdTelegram = idTelegramCreate,
                 Date = request.Date,
-                IdRoom = request.IdRoom,
-                IdTimeChunks = request.IdTimeChunks
+                IdRoom = request.IdRoom
             };
 
             _context.SubscribeRoom.Add(newSubscribeRoom);
@@ -97,7 +104,6 @@ namespace Zhuchkov_backend.Controllers
             return Ok(new { message = "Запись успешно удалена" });
         }
 
-        // PUT: api/SubscribeRooms/{id}
         public class UpdateSubscribeRoomRequest
         {
             public string IdTelegram { get; set; }
@@ -117,7 +123,6 @@ namespace Zhuchkov_backend.Controllers
             subscribeRoom.IdTelegram = request.IdTelegram;
             subscribeRoom.Date = request.Date;
             subscribeRoom.IdRoom = request.IdRoom;
-            subscribeRoom.IdTimeChunks = request.IdTimeChunks;
 
             _context.SubscribeRoom.Update(subscribeRoom);
             await _context.SaveChangesAsync();
