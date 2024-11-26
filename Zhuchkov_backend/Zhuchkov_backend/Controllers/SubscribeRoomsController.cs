@@ -138,9 +138,6 @@ namespace Zhuchkov_backend.Controllers
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
-            if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
-                return NotFound(new { message = "Некорректный IdTimeChunks" });
-
             if (request.IdTelegram != null)
                 subscribeRoom.IdTelegram = request.IdTelegram;
 
@@ -150,8 +147,11 @@ namespace Zhuchkov_backend.Controllers
             if (request.IdRoom != null)
                 subscribeRoom.IdRoom = request.IdRoom;
 
-            if (request.IdRoom != null)
+            if (request.IdTimeChunks != null)
             {
+                if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
+                    return NotFound(new { message = "Некорректный IdTimeChunks" });
+
                 var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
                 _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
 
@@ -164,7 +164,6 @@ namespace Zhuchkov_backend.Controllers
                     };
                     _context.SubTimeChunk.Add(subTimeChunk);
                 }
-                await _context.SaveChangesAsync();
             }
 
             _context.SubscribeRoom.Update(subscribeRoom);
