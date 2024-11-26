@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Data;
+using Zhuchkov_backend.Managers;
 using Zhuchkov_backend.Models;
 
 namespace Zhuchkov_backend.Controllers
@@ -15,10 +16,12 @@ namespace Zhuchkov_backend.Controllers
     public class SubscribeRoomsController : ControllerBase
     {
         private readonly Zhuchkov_backendContext _context;
+        private readonly TimeChunksManager _timeChunksManager;
 
         public SubscribeRoomsController(Zhuchkov_backendContext context)
         {
             _context = context;
+            _timeChunksManager = new TimeChunksManager(context);
         }
 
         // GET: api/SubscribeRooms/{id?}
@@ -29,36 +32,29 @@ namespace Zhuchkov_backend.Controllers
             var isAdmin = User.IsInRole("admin");
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
-            if (id == null)
-            {
-                if (isAdmin)
-                    return await _context.SubscribeRoom.ToListAsync();
+            if (string.IsNullOrEmpty(userIdTelegram))
+                return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
-                if (string.IsNullOrEmpty(userIdTelegram))
-                    return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
-
+            if (!isAdmin)
                 return await _context.SubscribeRoom
-                    .Where(s => s.IdTelegram == userIdTelegram)
-                    .ToListAsync();
-            }
+                   .Where(s => s.IdTelegram == userIdTelegram)
+                   .ToListAsync();
+
+            if (id == null)
+               return await _context.SubscribeRoom.ToListAsync();
 
             var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
-            if (!isAdmin && subscribeRoom.IdTelegram != userIdTelegram)
-                return StatusCode(403, new { message = "Доступ запрещен." });
-
             return new List<SubscribeRoom> { subscribeRoom };
         }
-
-
 
         public class CreateSubscribeRoomRequest
         {
             public DateTime Date { get; set; }
             public int IdRoom { get; set; }
-            public int IdTimeChunks { get; set; }
+            public int[] IdTimeChunks { get; set; }
         }
 
         [HttpPost("create/{idTelegram?}")]
@@ -72,9 +68,10 @@ namespace Zhuchkov_backend.Controllers
             var user = await _context.User.FindAsync(idTelegramCreate);
 
             if (user == null)
-            {
                 return NotFound(new { message = "Некорректный idTelegram" });
-            }
+            
+            if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
+                return NotFound(new { message = "Некорректный IdTimeChunks" });
 
             var newSubscribeRoom = new SubscribeRoom
             {
@@ -84,6 +81,17 @@ namespace Zhuchkov_backend.Controllers
             };
 
             _context.SubscribeRoom.Add(newSubscribeRoom);
+            await _context.SaveChangesAsync();
+
+            foreach (var timeChunkId in request.IdTimeChunks)
+            {
+                var subTimeChunk = new SubTimeChunk
+                {
+                    IdSub = newSubscribeRoom.Id,
+                    IdTimeChunk = timeChunkId
+                };
+                _context.SubTimeChunk.Add(subTimeChunk);
+            }
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Запись успешно создана", subscribeRoom = newSubscribeRoom });
