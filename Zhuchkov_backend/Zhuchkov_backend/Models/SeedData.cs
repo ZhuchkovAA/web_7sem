@@ -26,7 +26,6 @@ namespace Zhuchkov_backend.Models
                             FirstName = "Алексей",
                             LastName = "Жучков",
                             IsActive = true,
-                            IdStateTelegram = 0,
                             IsAdmin = true,
                             PasswordHash = "b2497c82a254d21e015e61194cd56406"
                         }
@@ -52,16 +51,6 @@ namespace Zhuchkov_backend.Models
                         new() { Id = 13, Time = "19:40-20:25" },
                         new() { Id = 14, Time = "20:30-21:15" },
                         new() { Id = 15, Time = "21:15-22:00" }
-                    );
-                }
-
-                if (!context.StateTelegram.Any())
-                {
-                    context.StateTelegram.AddRange(
-                        new() { Id = 0, Name = "Меню" },
-                        new() { Id = 1, Name = "Поиск свобоной аудитории" },
-                        new() { Id = 2, Name = "Профиль" },
-                        new() { Id = 3, Name = "Мои пересдачи" }
                     );
                 }
 
