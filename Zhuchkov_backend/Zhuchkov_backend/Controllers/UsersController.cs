@@ -92,7 +92,7 @@ namespace Zhuchkov_backend.Controllers
 
             newUser.SetPassword(request.Password);
 
-            _context.User.Add(newUser);
+            _context.Users.Add(newUser);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно добавлен", user = newUser });
@@ -107,7 +107,7 @@ namespace Zhuchkov_backend.Controllers
 
             var user = userResult.Value;
 
-            _context.User.Remove(user);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно удален" });
@@ -115,7 +115,7 @@ namespace Zhuchkov_backend.Controllers
 
         private async Task<bool> HasUserAsync(string idTelegram)
         {
-            return await _context.User.AnyAsync(u => u.IdTelegram == idTelegram);
+            return await _context.Users.AnyAsync(u => u.IdTelegram == idTelegram);
         }
 
         [HttpPut("{id}")]
@@ -144,7 +144,7 @@ namespace Zhuchkov_backend.Controllers
                 user.SetPassword(request.Password);
             }
 
-            _context.User.Update(user);
+            _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно обновлен", user });
@@ -162,7 +162,7 @@ namespace Zhuchkov_backend.Controllers
 
         private async Task<ActionResult<User>> FindUserAsync(string id)
         {
-            var user = await _context.User.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound(new { message = "Пользователь не найден" });

@@ -17,7 +17,7 @@ namespace Zhuchkov_backend.Managers
 
         public string GetTime(int id)
         {
-            return _context.TimeChunk
+            return _context.TimeChunks
                 .Where(t => t.Id == id)
                 .Select(t => t.Time)
                 .FirstOrDefault();
@@ -25,12 +25,12 @@ namespace Zhuchkov_backend.Managers
 
         public IQueryable<TimeChunk> GetTimeChunk(int id)
         {
-            return _context.TimeChunk.Where(tc => tc.Id == id);
+            return _context.TimeChunks.Where(tc => tc.Id == id);
         }
 
         public IQueryable<TimeChunk> GetTimeChunks()
         {
-            return _context.TimeChunk;
+            return _context.TimeChunks;
         }
 
         public bool CheckTimeChanks(int[] IdTimeChunks)
@@ -39,7 +39,7 @@ namespace Zhuchkov_backend.Managers
 
             foreach (var timeChunkId in IdTimeChunks)
             {
-                var timeChunkExists =  _context.TimeChunk.Any(tc => tc.Id == timeChunkId);
+                var timeChunkExists =  _context.TimeChunks.Any(tc => tc.Id == timeChunkId);
                 if (!timeChunkExists)
                     return false;
             }

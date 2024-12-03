@@ -30,7 +30,7 @@ namespace Zhuchkov_backend.Controllers
         public object GetToken ([FromBody] LoginData ld)
         {
             var hashedPassword = Models.User.GetHash(ld.Password);
-            var user = _context.User.FirstOrDefault(u => u.IdTelegram == ld.IdTelegram && u.PasswordHash == hashedPassword);
+            var user = _context.Users.FirstOrDefault(u => u.IdTelegram == ld.IdTelegram && u.PasswordHash == hashedPassword);
             if (user == null)
             {
                 Response.StatusCode = 401;

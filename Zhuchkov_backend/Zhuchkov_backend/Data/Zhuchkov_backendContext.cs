@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Models;
 
@@ -9,17 +7,33 @@ namespace Zhuchkov_backend.Data
 {
     public class Zhuchkov_backendContext : DbContext
     {
-        public Zhuchkov_backendContext (DbContextOptions<Zhuchkov_backendContext> options)
+        public Zhuchkov_backendContext(DbContextOptions<Zhuchkov_backendContext> options)
             : base(options)
         {
         }
 
-        public DbSet<Zhuchkov_backend.Models.User> User { get; set; } = default!;
+        public DbSet<User> Users { get; set; } = default!;
+        public DbSet<TimeChunk> TimeChunks { get; set; }
+        public DbSet<SubscribeRoom> SubscribeRooms { get; set; }
 
-        public DbSet<Zhuchkov_backend.Models.TimeChunk> TimeChunk { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        public DbSet<Zhuchkov_backend.Models.SubscribeRoom> SubscribeRoom { get; set; }
-
-        public DbSet<Zhuchkov_backend.Models.SubTimeChunk> SubTimeChunk { get; set; }
+            modelBuilder.Entity<SubscribeRoom>()
+                .HasMany(sr => sr.TimeChunks)
+                .WithMany(tc => tc.SubscribeRooms)
+                .UsingEntity<Dictionary<string, object>>(
+                    "SubscribeRoomTimeChunk",
+                    join => join
+                        .HasOne<TimeChunk>()
+                        .WithMany()
+                        .HasForeignKey("TimeChunkId"),
+                    join => join
+                        .HasOne<SubscribeRoom>()
+                        .WithMany()
+                        .HasForeignKey("SubscribeRoomId")
+                );
+        }
     }
 }

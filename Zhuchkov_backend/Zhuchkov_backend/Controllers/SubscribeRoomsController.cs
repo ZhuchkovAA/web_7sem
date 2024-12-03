@@ -37,14 +37,14 @@ namespace Zhuchkov_backend.Controllers
                 return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
             if (!isAdmin)
-                return await _context.SubscribeRoom
+                return await _context.SubscribeRooms
                    .Where(s => s.IdTelegram == userIdTelegram)
                    .ToListAsync();
 
             if (id == null)
-               return await _context.SubscribeRoom.ToListAsync();
+               return await _context.SubscribeRooms.ToListAsync();
 
-            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
+            var subscribeRoom = await _context.SubscribeRooms.FindAsync(id);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
@@ -72,7 +72,7 @@ namespace Zhuchkov_backend.Controllers
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
             var idTelegramCreate = isAdmin ? idTelegram ?? userIdTelegram : userIdTelegram;
-            var user = await _context.User.FindAsync(idTelegramCreate);
+            var user = await _context.Users.FindAsync(idTelegramCreate);
 
             if (user == null)
                 return NotFound(new { message = "Некорректный idTelegram" });
@@ -87,9 +87,10 @@ namespace Zhuchkov_backend.Controllers
                 IdRoom = request.IdRoom
             };
 
-            _context.SubscribeRoom.Add(newSubscribeRoom);
+            _context.SubscribeRooms.Add(newSubscribeRoom);
             await _context.SaveChangesAsync();
 
+            /*
             foreach (var timeChunkId in request.IdTimeChunks)
             {
                 var subTimeChunk = new SubTimeChunk
@@ -100,7 +101,7 @@ namespace Zhuchkov_backend.Controllers
                 _context.SubTimeChunk.Add(subTimeChunk);
             }
             await _context.SaveChangesAsync();
-
+            */
             return Ok(new { message = "Запись успешно создана", subscribeRoom = newSubscribeRoom });
         }
 
@@ -109,14 +110,15 @@ namespace Zhuchkov_backend.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteSubscribeRoom(int id)
         {
-            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
+            var subscribeRoom = await _context.SubscribeRooms.FindAsync(id);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
+            /*
             var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
             _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
-
-            _context.SubscribeRoom.Remove(subscribeRoom);
+            */
+            _context.SubscribeRooms.Remove(subscribeRoom);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Запись успешно удалена" });
@@ -134,7 +136,7 @@ namespace Zhuchkov_backend.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateSubscribeRoom(int id, [FromBody] UpdateSubscribeRoomRequest request)
         {
-            var subscribeRoom = await _context.SubscribeRoom.FindAsync(id);
+            var subscribeRoom = await _context.SubscribeRooms.FindAsync(id);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
@@ -151,10 +153,10 @@ namespace Zhuchkov_backend.Controllers
             {
                 if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
                     return NotFound(new { message = "Некорректный IdTimeChunks" });
-
+                /*
                 var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
                 _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
-
+                
                 foreach (var timeChunkId in request.IdTimeChunks)
                 {
                     var subTimeChunk = new SubTimeChunk
@@ -164,9 +166,10 @@ namespace Zhuchkov_backend.Controllers
                     };
                     _context.SubTimeChunk.Add(subTimeChunk);
                 }
+                */
             }
 
-            _context.SubscribeRoom.Update(subscribeRoom);
+            _context.SubscribeRooms.Update(subscribeRoom);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Запись успешно обновлена", subscribeRoom });

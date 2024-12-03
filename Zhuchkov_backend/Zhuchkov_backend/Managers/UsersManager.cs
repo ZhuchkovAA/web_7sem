@@ -15,17 +15,17 @@ namespace Zhuchkov_backend.Managers
 
         public IQueryable<User> GetUser(string id)
         {
-            return _context.User.Where(u => u.IdTelegram == id);
+            return _context.Users.Where(u => u.IdTelegram == id);
         }
 
         public IQueryable<User> GetUsers()
         {
-            return _context.User;
+            return _context.Users;
         }
 
         public IQueryable<User> GetActiveUsers()
         {
-            return _context.User.Where(user => user.IsActive);
+            return _context.Users.Where(user => user.IsActive);
         }
     }
 }

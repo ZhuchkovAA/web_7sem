@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Zhuchkov_backend.Data;
 
@@ -11,9 +12,10 @@ using Zhuchkov_backend.Data;
 namespace Zhuchkov_backend.Migrations
 {
     [DbContext(typeof(Zhuchkov_backendContext))]
-    partial class Zhuchkov_backendContextModelSnapshot : ModelSnapshot
+    [Migration("20241203172650_visual")]
+    partial class visual
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

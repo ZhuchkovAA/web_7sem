@@ -24,13 +24,13 @@ namespace YourNamespace.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TimeChunk>>> GetTimeChunks()
         {
-            return await _context.TimeChunk.ToListAsync();
+            return await _context.TimeChunks.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TimeChunk>> GetTimeChunk(int id)
         {
-            var timeChunk = await _context.TimeChunk.FindAsync(id);
+            var timeChunk = await _context.TimeChunks.FindAsync(id);
 
             if (timeChunk == null)
             {
@@ -44,7 +44,7 @@ namespace YourNamespace.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<TimeChunk>> CreateTimeChunk(TimeChunk timeChunk)
         {
-            _context.TimeChunk.Add(timeChunk);
+            _context.TimeChunks.Add(timeChunk);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetTimeChunk), new { id = timeChunk.Id }, timeChunk);
@@ -65,13 +65,13 @@ namespace YourNamespace.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTimeChunk(int id)
         {
-            var timeChunk = await _context.TimeChunk.FindAsync(id);
+            var timeChunk = await _context.TimeChunks.FindAsync(id);
             if (timeChunk == null)
             {
                 return NotFound();
             }
 
-            _context.TimeChunk.Remove(timeChunk);
+            _context.TimeChunks.Remove(timeChunk);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -79,7 +79,7 @@ namespace YourNamespace.Controllers
 
         private bool TimeChunkExists(int id)
         {
-            return _context.TimeChunk.Any(e => e.Id == id);
+            return _context.TimeChunks.Any(e => e.Id == id);
         }
     }
 }

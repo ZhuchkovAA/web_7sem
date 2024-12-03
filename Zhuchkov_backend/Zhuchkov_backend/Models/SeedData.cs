@@ -16,9 +16,9 @@ namespace Zhuchkov_backend.Models
                     DbContextOptions<Zhuchkov_backendContext>>()))
             {
                 
-                if (!context.User.Any())
+                if (!context.Users.Any())
                 {
-                    context.User.AddRange(
+                    context.Users.AddRange(
                         new User
                         {
                             IdTelegram = "394248224",
@@ -32,9 +32,9 @@ namespace Zhuchkov_backend.Models
                     );
                 }
 
-                if (!context.TimeChunk.Any())
+                if (!context.TimeChunks.Any())
                 {
-                    context.TimeChunk.AddRange(
+                    context.TimeChunks.AddRange(
                         new() { Id = 0, Time = "8:30-9:15" },
                         new() { Id = 1, Time = "9:15-10:00" },
                         new() { Id = 2, Time = "10:15-11:00" },

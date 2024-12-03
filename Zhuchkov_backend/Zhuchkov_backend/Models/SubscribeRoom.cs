@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Zhuchkov_backend.Models
 {
@@ -15,5 +16,7 @@ namespace Zhuchkov_backend.Models
         public string IdTelegram { get; set; }
         public DateTime Date { get; set; }
         public int IdRoom { get; set; }
+
+        public ICollection<TimeChunk> TimeChunks { get; set; } = new List<TimeChunk>();
     }
 }
