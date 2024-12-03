@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+
 
 namespace Zhuchkov_backend.Models
 {
@@ -12,6 +14,7 @@ namespace Zhuchkov_backend.Models
 
         public string Time { get; set; }
 
-        public ICollection<SubscribeRoom> SubscribeRooms { get; set; } = new List<SubscribeRoom>();
+        [JsonIgnore]
+        public virtual ICollection<SubscribeRoom> SubscribeRooms { get; set; } = new List<SubscribeRoom>();
     }
 }

@@ -51,7 +51,7 @@ namespace Zhuchkov_backend
             );
 
             services.AddDbContext<Zhuchkov_backendContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("Zhuchkov_backendContext")));
+                    options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("Zhuchkov_backendContext")));
 
             services.AddControllers();
         }

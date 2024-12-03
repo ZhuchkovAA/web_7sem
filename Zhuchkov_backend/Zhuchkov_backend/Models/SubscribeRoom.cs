@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
-using System.Security.Cryptography;
-using System.Text;
+using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
 namespace Zhuchkov_backend.Models
@@ -17,6 +16,6 @@ namespace Zhuchkov_backend.Models
         public DateTime Date { get; set; }
         public int IdRoom { get; set; }
 
-        public ICollection<TimeChunk> TimeChunks { get; set; } = new List<TimeChunk>();
+        public virtual ICollection<TimeChunk> TimeChunks { get; set; } = new List<TimeChunk>();
     }
 }

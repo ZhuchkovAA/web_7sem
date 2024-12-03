@@ -26,9 +26,9 @@ namespace Zhuchkov_backend.Controllers
         }
 
         // GET: api/SubscribeRooms/{id?}
-        [HttpGet("{id?}")]
+        [HttpGet("{idSub?}")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<SubscribeRoom>>> GetSubscribeRooms(string? id = null)
+        public async Task<ActionResult<IEnumerable<SubscribeRoom>>> GetSubscribeRooms(int? idSub = null)
         {
             var isAdmin = User.IsInRole("admin");
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
@@ -41,14 +41,14 @@ namespace Zhuchkov_backend.Controllers
                    .Where(s => s.IdTelegram == userIdTelegram)
                    .ToListAsync();
 
-            if (id == null)
+            if (idSub == null)
                return await _context.SubscribeRooms.ToListAsync();
 
-            var subscribeRoom = await _context.SubscribeRooms.FindAsync(id);
+            var subscribeRoom = await _context.SubscribeRooms.FindAsync(idSub);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
-            return new List<SubscribeRoom> { subscribeRoom };
+            return Ok(subscribeRoom);
         }
 
         public class CreateSubscribeRoomRequest
@@ -76,34 +76,32 @@ namespace Zhuchkov_backend.Controllers
 
             if (user == null)
                 return NotFound(new { message = "Некорректный idTelegram" });
-            
+
             if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
                 return NotFound(new { message = "Некорректный IdTimeChunks" });
+
+            var timeChunks = _context.TimeChunks
+                .Where(tc => request.IdTimeChunks.Contains(tc.Id))
+                .ToList();
+
+            if (!timeChunks.Any())
+                return NotFound(new { message = "Некорректные IdTimeChunks" });
 
             var newSubscribeRoom = new SubscribeRoom
             {
                 IdTelegram = idTelegramCreate,
                 Date = request.Date,
-                IdRoom = request.IdRoom
+                IdRoom = request.IdRoom,
+                TimeChunks = timeChunks
             };
+
 
             _context.SubscribeRooms.Add(newSubscribeRoom);
             await _context.SaveChangesAsync();
 
-            /*
-            foreach (var timeChunkId in request.IdTimeChunks)
-            {
-                var subTimeChunk = new SubTimeChunk
-                {
-                    IdSub = newSubscribeRoom.Id,
-                    IdTimeChunk = timeChunkId
-                };
-                _context.SubTimeChunk.Add(subTimeChunk);
-            }
-            await _context.SaveChangesAsync();
-            */
             return Ok(new { message = "Запись успешно создана", subscribeRoom = newSubscribeRoom });
         }
+
 
         // DELETE: api/SubscribeRooms/{id}
         [HttpDelete("{id}")]
@@ -114,10 +112,6 @@ namespace Zhuchkov_backend.Controllers
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
-            /*
-            var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
-            _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
-            */
             _context.SubscribeRooms.Remove(subscribeRoom);
             await _context.SaveChangesAsync();
 
@@ -153,20 +147,15 @@ namespace Zhuchkov_backend.Controllers
             {
                 if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
                     return NotFound(new { message = "Некорректный IdTimeChunks" });
-                /*
-                var relatedSubTimeChunks = _context.SubTimeChunk.Where(stc => stc.IdSub == id);
-                _context.SubTimeChunk.RemoveRange(relatedSubTimeChunks);
                 
+                var timeChunks = new List<TimeChunk> { };
                 foreach (var timeChunkId in request.IdTimeChunks)
                 {
-                    var subTimeChunk = new SubTimeChunk
-                    {
-                        IdSub = id,
-                        IdTimeChunk = timeChunkId
-                    };
-                    _context.SubTimeChunk.Add(subTimeChunk);
+                    var timeChunk = _context.TimeChunks.FirstOrDefault(tc => tc.Id == timeChunkId);
+                    if (timeChunk != null)
+                        timeChunks.Append(timeChunk);
                 }
-                */
+                subscribeRoom.TimeChunks = timeChunks;
             }
 
             _context.SubscribeRooms.Update(subscribeRoom);
