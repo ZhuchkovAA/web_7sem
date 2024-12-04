@@ -18,11 +18,14 @@ namespace Zhuchkov_backend.Controllers
     {
         private readonly Zhuchkov_backendContext _context;
         private readonly TimeChunksManager _timeChunksManager;
+        private readonly UsersManager _usersManager;
+        private readonly SubscribeRoomsManager _subscribeRoomsManager;
 
         public SubscribeRoomsController(Zhuchkov_backendContext context)
         {
             _context = context;
             _timeChunksManager = new TimeChunksManager(context);
+            _subscribeRoomsManager = new SubscribeRoomsManager(context);
         }
 
         // GET: api/SubscribeRooms/{id?}
@@ -72,10 +75,13 @@ namespace Zhuchkov_backend.Controllers
             var userIdTelegram = User.Claims.FirstOrDefault(c => c.Type == "IdTelegram")?.Value;
 
             var idTelegramCreate = isAdmin ? idTelegram ?? userIdTelegram : userIdTelegram;
-            var user = await _context.Users.FindAsync(idTelegramCreate);
+            var user = _usersManager.GetUser(idTelegramCreate);
 
             if (user == null)
                 return NotFound(new { message = "Некорректный idTelegram" });
+
+            if (!_usersManager.checkActiveUser(user))
+                return NotFound(new { message = "User is not active" });
 
             if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
                 return NotFound(new { message = "Некорректный IdTimeChunks" });
@@ -94,6 +100,8 @@ namespace Zhuchkov_backend.Controllers
                 IdRoom = request.IdRoom,
                 TimeChunks = timeChunks
             };
+
+            if (_subscribeRoomsManager.HasAlreadySub(newSubscribeRoom)) return BadRequest(new {message = "Room is already sub"});
 
 
             _context.SubscribeRooms.Add(newSubscribeRoom);

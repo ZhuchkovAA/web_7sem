@@ -44,12 +44,12 @@ namespace Zhuchkov_backend.Controllers
                 return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
             if (!isAdmin)
-                return Ok(await _usersManager.GetUser(userIdTelegram).ToListAsync());
+                return Ok(_usersManager.GetUser(userIdTelegram));
 
             if (id == null)
                 return Ok(await _usersManager.GetUsers().ToListAsync());
 
-            var user = await _usersManager.GetUser(id).FirstOrDefaultAsync();
+            var user = _usersManager.GetUser(id);
 
             if (user == null)
                 return NotFound(new { message = "Пользователь не найден." });
@@ -98,6 +98,21 @@ namespace Zhuchkov_backend.Controllers
             return Ok(new { message = "Пользователь успешно добавлен", user = newUser });
         }
 
+        [HttpPost("changeActive/{id}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ChangeActiveUser(string id)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.IdTelegram == id);
+            
+            if (user == null)
+                return NotFound(new { message = "Пользователь с таким IdTelegram не найден." });
+
+            user.IsActive = !user.IsActive;
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Статус пользователя успешно обновлён", user });
+        }
+
+
         [HttpDelete("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteUser(string id)
@@ -116,6 +131,15 @@ namespace Zhuchkov_backend.Controllers
         private async Task<bool> HasUserAsync(string idTelegram)
         {
             return await _context.Users.AnyAsync(u => u.IdTelegram == idTelegram);
+        }
+
+        public class UpdateUserRequest
+        {
+            public string? TagTelegram { get; set; }
+            public string? FirstName { get; set; }
+            public string? LastName { get; set; }
+            public bool? IsActive { get; set; }
+            public string? Password { get; set; }
         }
 
         [HttpPut("{id}")]
@@ -149,16 +173,6 @@ namespace Zhuchkov_backend.Controllers
 
             return Ok(new { message = "Пользователь успешно обновлен", user });
         }
-
-        public class UpdateUserRequest
-        {
-            public string? TagTelegram { get; set; }
-            public string? FirstName { get; set; }
-            public string? LastName { get; set; }
-            public bool? IsActive { get; set; }
-            public string? Password { get; set; }
-        }
-
 
         private async Task<ActionResult<User>> FindUserAsync(string id)
         {

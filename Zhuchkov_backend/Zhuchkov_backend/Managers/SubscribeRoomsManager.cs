@@ -27,5 +27,17 @@ namespace Zhuchkov_backend.Managers
         {
             return _context.SubscribeRooms.Where(s => s.IdTelegram == idTelegram);
         }
+
+        public bool HasAlreadySub(SubscribeRoom sub)
+        {
+            var timeChunks = sub.TimeChunks;
+            var currentSubs = _context.SubscribeRooms.Where(s => (s.Date == sub.Date) && (s.IdRoom == sub.IdRoom)).ToList();
+            foreach (var currentSub in currentSubs) {
+                var commonTimeChunks = timeChunks.Intersect(currentSub.TimeChunks).ToArray();
+                if (commonTimeChunks.Any()) return true;
+            }
+            return false;
+
+        }
     }
 }

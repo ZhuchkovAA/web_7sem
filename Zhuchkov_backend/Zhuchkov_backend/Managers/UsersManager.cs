@@ -13,9 +13,9 @@ namespace Zhuchkov_backend.Managers
             _context = context;
         }
 
-        public IQueryable<User> GetUser(string id)
+        public User GetUser(string id)
         {
-            return _context.Users.Where(u => u.IdTelegram == id);
+            return _context.Users.FirstOrDefault(u => u.IdTelegram == id);
         }
 
         public IQueryable<User> GetUsers()
@@ -27,6 +27,14 @@ namespace Zhuchkov_backend.Managers
         {
             return _context.Users.Where(user => user.IsActive);
         }
+
+        public bool checkActiveUser(User user)
+        {
+            if (user == null) return false;
+            return user.IsActive;
+        }
+
+        
     }
 }
 

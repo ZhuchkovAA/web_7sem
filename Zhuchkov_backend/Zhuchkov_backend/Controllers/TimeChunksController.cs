@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Zhuchkov_backend.Models;
+using Zhuchkov_backend.Managers;
 using Zhuchkov_backend.Data;
 
 namespace YourNamespace.Controllers
@@ -15,10 +16,12 @@ namespace YourNamespace.Controllers
     public class TimeChunkController : ControllerBase
     {
         private readonly Zhuchkov_backendContext _context;
+        private readonly TimeChunksManager _timeChunksManager;
 
         public TimeChunkController(Zhuchkov_backendContext context)
         {
             _context = context;
+            _timeChunksManager = new TimeChunksManager(_context);
         }
 
         [HttpGet]
@@ -28,14 +31,12 @@ namespace YourNamespace.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TimeChunk>> GetTimeChunk(int id)
+        public ActionResult<TimeChunk> GetTimeChunk(int id)
         {
-            var timeChunk = await _context.TimeChunks.FindAsync(id);
+            var timeChunk =_timeChunksManager.GetTimeChunk(id);
 
             if (timeChunk == null)
-            {
                 return NotFound();
-            }
 
             return timeChunk;
         }
@@ -50,32 +51,32 @@ namespace YourNamespace.Controllers
             return CreatedAtAction(nameof(GetTimeChunk), new { id = timeChunk.Id }, timeChunk);
         }
 
-        [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> PutTimeChunk(TimeChunk timeChunk)
-        {
-            _context.Entry(timeChunk).State = EntityState.Modified;
+        // [HttpPut("{id}")]
+        // [Authorize(Roles = "Admin")]
+        // public async Task<IActionResult> PutTimeChunk(TimeChunk timeChunk)
+        // {
+        //     _context.Entry(timeChunk).State = EntityState.Modified;
 
-            await _context.SaveChangesAsync();
+        //     await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+        //     return Ok();
+        // }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteTimeChunk(int id)
-        {
-            var timeChunk = await _context.TimeChunks.FindAsync(id);
-            if (timeChunk == null)
-            {
-                return NotFound();
-            }
+        // [HttpDelete("{id}")]
+        // [Authorize(Roles = "Admin")]
+        // public async Task<IActionResult> DeleteTimeChunk(int id)
+        // {
+        //     var timeChunk = await _context.TimeChunks.FindAsync(id);
+        //     if (timeChunk == null)
+        //     {
+        //         return NotFound();
+        //     }
 
-            _context.TimeChunks.Remove(timeChunk);
-            await _context.SaveChangesAsync();
+        //     _context.TimeChunks.Remove(timeChunk);
+        //     await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //     return NoContent();
+        // }
 
         private bool TimeChunkExists(int id)
         {

@@ -15,9 +15,9 @@ namespace Zhuchkov_backend.Managers
             _context = context;
         }
 
-        public IQueryable<TimeChunk> GetTimeChunk(int id)
+        public TimeChunk GetTimeChunk(int id)
         {
-            return _context.TimeChunks.Where(tc => tc.Id == id);
+            return _context.TimeChunks.FirstOrDefault(tc => tc.Id == id);
         }
 
         public IQueryable<TimeChunk> GetTimeChunks()
