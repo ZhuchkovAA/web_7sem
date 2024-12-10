@@ -1,234 +1,26 @@
 {
 	"info": {
-		"_postman_id": "72321b52-6843-490d-98c6-a54cd9b29c2a",
+		"_postman_id": "c84370fe-a706-42b5-a1bc-97e869344a73",
 		"name": "crossplatform",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24569186"
 	},
 	"item": [
 		{
-			"name": "get token",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/api/auth/token",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"auth",
-						"token"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get admin token",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/api/auth/token/secret",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"auth",
-						"token",
-						"secret"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get data with token",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Imd1ZXN0IiwibmJmIjoxNTg2NzIwMjkyLCJleHAiOjE2MTgyNTYyOTIsImlzcyI6IlRNIiwiYXVkIjoiQVBJY2xpZW50cyJ9.-dveRdWjAKIJejb6Ar84trgotzCWjZBAwaXK2nTFGDk",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/weatherforecast/summaries",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"weatherforecast",
-						"summaries"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get forecasts for week",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/weatherforecast/week",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"weatherforecast",
-						"week"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "get forecast",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/weatherforecast/",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"weatherforecast",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add item",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwibmJmIjoxNTg2NzIwMzEyLCJleHAiOjE2MTgyNTYzMTIsImlzcyI6IlRNIiwiYXVkIjoiQVBJY2xpZW50cyJ9.G2OpN5_hTPPMOYtxe2ZlFJNLVwiWKQiVpOsoHXq-pGA",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/weatherforecast/add/snow",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"weatherforecast",
-						"add",
-						"snow"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "add item with guest token",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Imd1ZXN0IiwibmJmIjoxNTg2NzIwMjkyLCJleHAiOjE2MTgyNTYyOTIsImlzcyI6IlRNIiwiYXVkIjoiQVBJY2xpZW50cyJ9.-dveRdWjAKIJejb6Ar84trgotzCWjZBAwaXK2nTFGDk",
-							"type": "string"
-						}
-					]
-				},
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/weatherforecast/add/snow",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"weatherforecast",
-						"add",
-						"snow"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "users",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:5001/api/auth/users",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"api",
-						"auth",
-						"users"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "admin login",
+			"name": "login admin",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsInN1cGVyX2FkbWluIl0sIm5iZiI6MTczMTk1NDQ5OCwiZXhwIjoxNzYzNDkwNDk4LCJpc3MiOiJUTSIsImF1ZCI6IkFQSWNsaWVudHMifQ.3s5qEPEmGFzwWOJ3wZFGqov71jHmAAd3AEYsiBlbOuw",
+						"type": "text",
+						"disabled": true
+					}
+				],
 				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "login",
-							"value": "admin",
-							"type": "text"
-						},
-						{
-							"key": "password",
-							"value": "!#/)zW��C�J\u000eJ�\u001f�",
-							"type": "text"
-						}
-					],
+					"mode": "raw",
+					"raw": "{\r\n    \"IdTelegram\": \"394248224\",\r\n    \"Password\": \"ZhuchkovAA\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -236,7 +28,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:5001/api/auth/",
+					"raw": "https://localhost:5001/api/auth",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -244,44 +36,269 @@
 					"port": "5001",
 					"path": [
 						"api",
-						"auth",
-						""
+						"auth"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "choose weather",
+			"name": "login user",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwibmJmIjoxNTg2NzIwMzEyLCJleHAiOjE2MTgyNTYzMTIsImlzcyI6IlRNIiwiYXVkIjoiQVBJY2xpZW50cyJ9.G2OpN5_hTPPMOYtxe2ZlFJNLVwiWKQiVpOsoHXq-pGA",
-							"type": "string"
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsInN1cGVyX2FkbWluIl0sIm5iZiI6MTczMTk1NDQ5OCwiZXhwIjoxNzYzNDkwNDk4LCJpc3MiOiJUTSIsImF1ZCI6IkFQSWNsaWVudHMifQ.3s5qEPEmGFzwWOJ3wZFGqov71jHmAAd3AEYsiBlbOuw",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"IdTelegram\": \"1234\",\r\n    \"Password\": \"testTag\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
 						}
-					]
+					}
 				},
-				"method": "GET",
-				"header": [],
 				"url": {
-					"raw": "https://localhost:5001/weatherforecast/choose/sunny",
+					"raw": "https://localhost:5001/api/auth",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "5001",
 					"path": [
-						"weatherforecast",
-						"choose",
-						"sunny"
+						"api",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIzOTQyNDgyMjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJuYmYiOjE3MzI2MzI3MzAsImV4cCI6MTc2NDE2ODczMCwiaXNzIjoiQUEiLCJhdWQiOiJBUEljbGllbnRzIn0.d7TpKgWZ1BrBssxCGSL_gula1LBH5xmRiwo2T5RV_fg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"IdTelegram\": \"12345\",\r\n    \"TagTelegram\": \"testTag2\",\r\n    \"FirstName\": \"testF2\",\r\n    \"LastName\": \"testL2\",\r\n    \"Password\": \"testTag2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/users/create",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"users",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIxMjM0IiwibmJmIjoxNzMyNjM0NjA1LCJleHAiOjE3NjQxNzA2MDUsImlzcyI6IkFBIiwiYXVkIjoiQVBJY2xpZW50cyJ9.Vgesfr-ZtNlRitiWG9w_OyP6OFb6g_ormADdjCJCZLY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/users/12345",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"users",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user put",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIzOTQyNDgyMjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJuYmYiOjE3MzI2MzU3NDYsImV4cCI6MTc2NDE3MTc0NiwiaXNzIjoiQUEiLCJhdWQiOiJBUEljbGllbnRzIn0.ADZ9nOQv3SJP3dkWhyECcD_SStjpql4Ws6yipgTLF2c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"LastName\": \"testPut\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/users/1234",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"users",
+						"1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sub create",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIxMjM0IiwibmJmIjoxNzMyNjUwMDU0LCJleHAiOjE3NjQxODYwNTQsImlzcyI6IkFBIiwiYXVkIjoiQVBJY2xpZW50cyJ9.oNgo9TW6mfABaTAnphprzMLvuEYh1T9qhQ-5C_LwDXk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"date\": \"2024-11-20T10:00:00\",\r\n    \"idRoom\": 1,\r\n    \"idTimeChunks\": [1, 2]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/SubscribeRooms/create",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"SubscribeRooms",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sub put",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIzOTQyNDgyMjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJuYmYiOjE3MzI2NDk3NTgsImV4cCI6MTc2NDE4NTc1OCwiaXNzIjoiQUEiLCJhdWQiOiJBUEljbGllbnRzIn0.3McKUmdWsymjNstbIgJ4TLcs6WgjdwwTKcY_f1xYN7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"date\": \"2023-11-20T10:00:00\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/SubscribeRooms/1004",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"SubscribeRooms",
+						"1004"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "sub delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoidXNlciIsIklkVGVsZWdyYW0iOiIzOTQyNDgyMjQiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOlsiYWRtaW4iLCJzdXBlcl9hZG1pbiJdLCJuYmYiOjE3MzMyNTA2OTcsImV4cCI6MTc2NDc4NjY5NywiaXNzIjoiQUEiLCJhdWQiOiJBUEljbGllbnRzIn0.ujmdKio6NZ3LbwgaeB-m64TlbD27YZ0H1IcZIkctVkg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/SubscribeRooms/2008",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"SubscribeRooms",
+						"2008"
 					]
 				}
 			},
 			"response": []
 		}
-	],
-	"protocolProfileBehavior": {}
+	]
 }

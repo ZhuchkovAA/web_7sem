@@ -26,6 +26,7 @@ namespace Zhuchkov_backend.Controllers
             _context = context;
             _timeChunksManager = new TimeChunksManager(context);
             _subscribeRoomsManager = new SubscribeRoomsManager(context);
+            _usersManager = new UsersManager(context);
         }
 
         // GET: api/SubscribeRooms/{id?}
@@ -40,21 +41,19 @@ namespace Zhuchkov_backend.Controllers
                 return Unauthorized(new { message = "Идентификатор пользователя отсутствует." });
 
             if (!isAdmin)
-                return await _context.SubscribeRooms
-                   .Where(s => s.IdTelegram == userIdTelegram)
-                   .ToListAsync();
+                return Ok(await _subscribeRoomsManager.GetSubsUser(userIdTelegram).ToListAsync());
 
             if (idSub == null)
-               return await _context.SubscribeRooms.ToListAsync();
+               return Ok(await _subscribeRoomsManager.GetSubs().ToListAsync());
 
-            var subscribeRoom = await _context.SubscribeRooms.FindAsync(idSub);
+            var subscribeRoom = await _subscribeRoomsManager.FindAsync(idSub);
             if (subscribeRoom == null)
                 return NotFound(new { message = "Запись не найдена" });
 
             return Ok(subscribeRoom);
         }
 
-        public class CreateSubscribeRoomRequest
+        public struct CreateSubscribeRoomRequest
         {
             [Required(ErrorMessage = "Поле Date обязательно для заполнения")]
             public DateTime Date { get; set; }
@@ -86,9 +85,7 @@ namespace Zhuchkov_backend.Controllers
             if (!_timeChunksManager.CheckTimeChanks(request.IdTimeChunks))
                 return NotFound(new { message = "Некорректный IdTimeChunks" });
 
-            var timeChunks = _context.TimeChunks
-                .Where(tc => request.IdTimeChunks.Contains(tc.Id))
-                .ToList();
+            var timeChunks = await _timeChunksManager.GetTimeChunksRequest(request.IdTimeChunks);
 
             if (!timeChunks.Any())
                 return NotFound(new { message = "Некорректные IdTimeChunks" });
@@ -128,10 +125,10 @@ namespace Zhuchkov_backend.Controllers
 
         public class UpdateSubscribeRoomRequest
         {
-            public string IdTelegram { get; set; }
-            public DateTime Date { get; set; }
-            public int IdRoom { get; set; }
-            public int[] IdTimeChunks { get; set; }
+            public string? IdTelegram { get; set; }
+            public DateTime? Date { get; set; }
+            public int? IdRoom { get; set; }
+            public int[]? IdTimeChunks { get; set; }
         }
 
         [HttpPut("{id}")]
@@ -145,11 +142,11 @@ namespace Zhuchkov_backend.Controllers
             if (request.IdTelegram != null)
                 subscribeRoom.IdTelegram = request.IdTelegram;
 
-            if (request.Date != null)
-                subscribeRoom.Date = request.Date;
+            if (request.Date.HasValue)
+                subscribeRoom.Date = request.Date.Value;
 
-            if (request.IdRoom != null)
-                subscribeRoom.IdRoom = request.IdRoom;
+            if (request.IdRoom.HasValue)
+                subscribeRoom.IdRoom = request.IdRoom.Value;
 
             if (request.IdTimeChunks != null)
             {

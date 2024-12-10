@@ -64,7 +64,7 @@ namespace Zhuchkov_backend.Controllers
             return await _usersManager.GetActiveUsers().ToListAsync();
         }
 
-        public class CreateUserRequest
+        public struct CreateUserRequest
         {
             public string IdTelegram { get; set; }
             public string TagTelegram { get; set; }

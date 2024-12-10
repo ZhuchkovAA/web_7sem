@@ -51,33 +51,6 @@ namespace YourNamespace.Controllers
             return CreatedAtAction(nameof(GetTimeChunk), new { id = timeChunk.Id }, timeChunk);
         }
 
-        // [HttpPut("{id}")]
-        // [Authorize(Roles = "Admin")]
-        // public async Task<IActionResult> PutTimeChunk(TimeChunk timeChunk)
-        // {
-        //     _context.Entry(timeChunk).State = EntityState.Modified;
-
-        //     await _context.SaveChangesAsync();
-
-        //     return Ok();
-        // }
-
-        // [HttpDelete("{id}")]
-        // [Authorize(Roles = "Admin")]
-        // public async Task<IActionResult> DeleteTimeChunk(int id)
-        // {
-        //     var timeChunk = await _context.TimeChunks.FindAsync(id);
-        //     if (timeChunk == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     _context.TimeChunks.Remove(timeChunk);
-        //     await _context.SaveChangesAsync();
-
-        //     return NoContent();
-        // }
-
         private bool TimeChunkExists(int id)
         {
             return _context.TimeChunks.Any(e => e.Id == id);

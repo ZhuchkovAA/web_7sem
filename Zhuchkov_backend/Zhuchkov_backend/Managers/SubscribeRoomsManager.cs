@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
+using System.Threading.Tasks;
 
 namespace Zhuchkov_backend.Managers
 {
@@ -16,6 +17,14 @@ namespace Zhuchkov_backend.Managers
         public IQueryable<SubscribeRoom> GetSub(int id)
         {
             return _context.SubscribeRooms.Where(s => s.Id == id);
+        }
+
+        public Task<SubscribeRoom?> FindAsync(int? id)
+        {
+            if (!id.HasValue)
+                return null;
+
+            return _context.SubscribeRooms.FindAsync(id).AsTask();
         }
 
         public IQueryable<SubscribeRoom> GetSubs()

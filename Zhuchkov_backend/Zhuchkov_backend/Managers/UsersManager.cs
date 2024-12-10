@@ -18,9 +18,19 @@ namespace Zhuchkov_backend.Managers
             return _context.Users.FirstOrDefault(u => u.IdTelegram == id);
         }
 
-        public IQueryable<User> GetUsers()
+        public IQueryable<object> GetUsers()
         {
-            return _context.Users;
+            return _context.Users
+                .Select(user => new
+                {
+                    user.IdTelegram,
+                    user.TagTelegram,
+                    user.FirstName,
+                    user.LastName,
+                    user.IsActive,
+                    user.IsAdmin,
+                    user.IsSuperAdmin
+                });
         }
 
         public IQueryable<User> GetActiveUsers()
