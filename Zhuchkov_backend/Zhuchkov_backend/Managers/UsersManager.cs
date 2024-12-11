@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using Zhuchkov_backend.Data;
 using Zhuchkov_backend.Models;
 
@@ -44,7 +46,20 @@ namespace Zhuchkov_backend.Managers
             return user.IsActive;
         }
 
-        
+        public void Add(User user)
+        {
+            _context.Users.Add(user);
+        }
+
+        public void Remove(User user) {
+            _context.Users.Remove(user);
+        }
+
+        public async Task<bool> HasUserAsync(string idTelegram)
+        {
+            return await _context.Users.AnyAsync(u => u.IdTelegram == idTelegram);
+        }
+
     }
 }
 

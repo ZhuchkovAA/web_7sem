@@ -76,7 +76,7 @@ namespace Zhuchkov_backend.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {
-            if (await HasUserAsync(request.IdTelegram))
+            if (await _usersManager.HasUserAsync(request.IdTelegram))
                 return BadRequest("Пользователь с таким IdTelegram уже существует.");
 
             var newUser = new User
@@ -92,7 +92,7 @@ namespace Zhuchkov_backend.Controllers
 
             newUser.SetPassword(request.Password);
 
-            _context.Users.Add(newUser);
+            _usersManager.Add(newUser);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно добавлен", user = newUser });
@@ -102,7 +102,7 @@ namespace Zhuchkov_backend.Controllers
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> ChangeActiveUser(string id)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.IdTelegram == id);
+            var user =  _usersManager.GetUser(id);
             
             if (user == null)
                 return NotFound(new { message = "Пользователь с таким IdTelegram не найден." });
@@ -122,15 +122,10 @@ namespace Zhuchkov_backend.Controllers
 
             var user = userResult.Value;
 
-            _context.Users.Remove(user);
+            _usersManager.Remove(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Пользователь успешно удален" });
-        }
-
-        private async Task<bool> HasUserAsync(string idTelegram)
-        {
-            return await _context.Users.AnyAsync(u => u.IdTelegram == idTelegram);
         }
 
         public class UpdateUserRequest

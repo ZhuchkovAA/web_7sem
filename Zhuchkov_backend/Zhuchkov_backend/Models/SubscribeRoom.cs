@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System;
-using System.Text.Json.Serialization;
 using System.Collections.Generic;
 
 namespace Zhuchkov_backend.Models
