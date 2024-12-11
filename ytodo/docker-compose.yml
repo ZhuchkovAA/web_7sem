@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+  php:
+    image: yiisoftware/yii2-php:7.4-apache
+    volumes:
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      - ./:/app:delegated
+    ports:
+      - '8000:80'
+
+  mariadb:
+    image: mariadb:10.6 # Образ MariaDB, укажите нужную версию
+    container_name: mariadb-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootPasswordMariaDB # Задайте пароль root
+      MYSQL_DATABASE: todo_app                 # Имя создаваемой базы
+      MYSQL_USER: root                         # Пользователь
+      MYSQL_PASSWORD: rootPassword             # Пароль пользователя
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+      - ./init-scripts:/docker-entrypoint-initdb.d
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-container
+    restart: always
+    environment:
+      PMA_HOST: mariadb-container  # Имя сервиса MariaDB
+      PMA_PORT: 3306               # Порт MariaDB
+      PMA_USER: root               # Пользователь MariaDB
+      PMA_PASSWORD: rootPasswordMariaDB   # Пароль MariaDB
+    ports:
+      - "8080:80" # phpMyAdmin будет доступен по адресу http://localhost:8080
+
+volumes:
+  mariadb_data:
