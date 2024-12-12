@@ -10,14 +10,14 @@ services:
       - '8000:80'
 
   mariadb:
-    image: mariadb:10.6 # Образ MariaDB, укажите нужную версию
+    image: mariadb:10.6 
     container_name: mariadb-container
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootPasswordMariaDB # Задайте пароль root
-      MYSQL_DATABASE: todo_app                 # Имя создаваемой базы
-      MYSQL_USER: root                         # Пользователь
-      MYSQL_PASSWORD: rootPassword             # Пароль пользователя
+      MYSQL_ROOT_PASSWORD: rootPasswordMariaDB 
+      MYSQL_DATABASE: todo_app                 
+      MYSQL_USER: root                         
+      MYSQL_PASSWORD: rootPassword             
     ports:
       - "3306:3306"
     volumes:
@@ -29,12 +29,14 @@ services:
     container_name: phpmyadmin-container
     restart: always
     environment:
-      PMA_HOST: mariadb-container  # Имя сервиса MariaDB
-      PMA_PORT: 3306               # Порт MariaDB
-      PMA_USER: root               # Пользователь MariaDB
-      PMA_PASSWORD: rootPasswordMariaDB   # Пароль MariaDB
+      PMA_HOST: mariadb-container  
+      PMA_PORT: 3306               
+      PMA_USER: root               
+      PMA_PASSWORD: rootPasswordMariaDB   
     ports:
-      - "8080:80" # phpMyAdmin будет доступен по адресу http://localhost:8080
+      - "8080:80"
 
 volumes:
   mariadb_data:
+
+

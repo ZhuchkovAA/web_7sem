@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers;
 
 use yii;
@@ -8,13 +9,21 @@ use yii\web\Controller;
 use yii\web\Response;
 
 
-class TodoController extends Controller 
+class TodoController extends Controller
 {
     public function actionIndex()
     {
         $categories = Category::find()->all();
-        $todos = Todo::find()->all();
-        return $this->render('home', ['todos' => $todos, 'categories' =>$categories]);
+
+        $categoryId = Yii::$app->request->get('category');
+
+        $query = Todo::find()->orderBy(['is_active' => SORT_DESC]);
+        if ($categoryId) {
+            $query->andWhere(['category_id' => $categoryId]);
+        }
+        $todos = $query->all();
+
+        return $this->render('home', ['todos' => $todos, 'categories' => $categories]);
     }
 
     public function actionCreate()
@@ -49,44 +58,43 @@ class TodoController extends Controller
                 'message' => 'Invalid details.',
             ];
         }
-    
     }
 
     public function actionDelete()
     {
-        Yii::$app->response->format = Response::FORMAT_JSON; 
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
         $todo_Id = Yii::$app->request->post('id');
-        $todo = Todo::findOne($todo_Id); 
+        $todo = Todo::findOne($todo_Id);
 
-    if ($todo) {
-        if ($todo->delete()) {
-            
-            return [
-                'status' => 'success',
-                'message' => 'Todo item deleted successfully.'
-            ];
+        if ($todo) {
+            if ($todo->delete()) {
+
+                return [
+                    'status' => 'success',
+                    'message' => 'Todo item deleted successfully.'
+                ];
+            } else {
+
+                return [
+                    'status' => 'error',
+                    'message' => 'Failed to delete the todo item.'
+                ];
+            }
         } else {
-            
             return [
                 'status' => 'error',
-                'message' => 'Failed to delete the todo item.'
+                'message' => 'Todo item not found.'
             ];
         }
-    } else {
-        return [
-            'status' => 'error',
-            'message' => 'Todo item not found.'
-        ];
-    }
     }
 
     public function actionUpdate()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
 
-        $todoId = Yii::$app->request->post('id'); 
-        $todoName = Yii::$app->request->post('name'); 
+        $todoId = Yii::$app->request->post('id');
+        $todoName = Yii::$app->request->post('name');
         $categoryId = Yii::$app->request->post('category_id');
 
         $todo = Todo::findOne($todoId);
@@ -111,4 +119,19 @@ class TodoController extends Controller
         }
     }
 
+    public function actionChangeActive()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        $todoId = Yii::$app->request->post('id');
+        $todo = Todo::findOne($todoId);
+
+        $todo->isActive = !$todo->isActive;
+
+        if ($todo->save(false)) {
+            return [
+                'status' => 'success'
+            ];
+        }
+    }
 }

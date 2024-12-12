@@ -1,0 +1,16 @@
+.block-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.block-actions {
+    border-bottom: 0 solid transparent;
+}
+
+.trow {
+    border-bottom-width: var(--bs-border-width);
+}
+
+#category-filter {
+    max-width: 200px;
+}
