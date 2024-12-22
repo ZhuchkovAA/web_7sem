@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Zhuchkov_backend.Data;
-using Zhuchkov_backend.Models;
-using Zhuchkov_backend.Managers;
+using Kosov_backend.Data;
+using Kosov_backend.Models;
+using Kosov_backend.Managers;
 
-namespace Zhuchkov_backend.Controllers
+namespace Kosov_backend.Controllers
 {
     public class UpdateUserRequest
     {
@@ -24,10 +24,10 @@ namespace Zhuchkov_backend.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly Zhuchkov_backendContext _context;
+        private readonly Kosov_backendContext _context;
         private readonly UsersManager _usersManager;
 
-        public UsersController(Zhuchkov_backendContext context)
+        public UsersController(Kosov_backendContext context)
         {
             _context = context;
             _usersManager = new UsersManager(context);

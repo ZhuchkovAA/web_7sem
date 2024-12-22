@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Zhuchkov_backend.Data;
-using Zhuchkov_backend.Managers;
-using Zhuchkov_backend.Models;
+using Kosov_backend.Data;
+using Kosov_backend.Managers;
+using Kosov_backend.Models;
 
-namespace Zhuchkov_backend.Controllers
+namespace Kosov_backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class SubscribeRoomsController : ControllerBase
     {
-        private readonly Zhuchkov_backendContext _context;
+        private readonly Kosov_backendContext _context;
         private readonly TimeChunksManager _timeChunksManager;
         private readonly UsersManager _usersManager;
         private readonly SubscribeRoomsManager _subscribeRoomsManager;
 
-        public SubscribeRoomsController(Zhuchkov_backendContext context)
+        public SubscribeRoomsController(Kosov_backendContext context)
         {
             _context = context;
             _timeChunksManager = new TimeChunksManager(context);
